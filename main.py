@@ -62,7 +62,7 @@ def create_db():
     cur = conn.cursor()
     cur.execute('''CREATE TABLE CHATS
            (CHAT_ID        TEXT PRIMARY KEY     NOT NULL,
-            LAST_TS        INT     NOT NULL,);''')
+            LAST_TS        INT     NOT NULL);''')
     return jsonify({"result":"Table created successfully"})
 
 if __name__ == '__main__':
