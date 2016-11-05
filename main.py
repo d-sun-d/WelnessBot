@@ -117,25 +117,31 @@ def get_all_chats():
         "SELECT CHAT_ID, LAST_TS  from CHATS"
     )
     rows = cur.fetchall()
+    result = []
+    for row in rows:
+        chat_id, last_ts = row[0], row[1]
+        result.append({"CHAT_ID":chat_id, "LAST_TS":last_ts})
     cur.close()
     conn.close()
-    return rows
+    return result
 
 @app.route('/show_chats')
 def show_chats():
     rows = get_all_chats()
-    return jsonify(rows)
+    return jsonify({"CHATS":rows})
 
 @app.route("/anons_update")
 def anons_update():
-    for chat_id in get_all_chats().keys():
+    count = 0
+    for chat_info in get_all_chats():
+        chat_id = chat_info["CHAT_ID"]
         res = {
             'chat_id': chat_id,
             'text': "My new version is "+VERSION
         }
         requests.post('https://api.telegram.org/bot{0}/SendMessage'.format(os.environ.get('TELEGRAM_TOKEN')), data=res)
-
-
+        count += 1
+    return jsonify({"update_setn": count})
 
 if __name__ == '__main__':
     urlparse.uses_netloc.append("postgres")
