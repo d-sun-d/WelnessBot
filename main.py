@@ -154,7 +154,7 @@ def main_page():
         "homepage.html",
         version=VERSION,
         users_count=count_users(),
-        update_text=texts.UPDATE_ANONS
+        update_text=texts.UPDATE_ANONS.encode("utf-8")
     )
 
 if __name__ == '__main__':
