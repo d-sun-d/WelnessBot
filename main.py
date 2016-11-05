@@ -38,7 +38,7 @@ update_schema = {
 
 
 HODOR_QUOTES = ['Hodor!', 'Hodor.', 'Hodor! Hodor!', 'HOOODOORRR!!']
-VERSION = "0.0.3"
+VERSION = "0.0.4"
 
 def new_conn():
     conn = psycopg2.connect(
