@@ -9,6 +9,9 @@ import psycopg2
 import urlparse
 import time
 
+from texts import VERSION
+import texts
+
 app = Flask(__name__)
 app.logger.setLevel(logging.INFO)
 app.logger.addHandler(StreamHandler())
@@ -36,10 +39,6 @@ update_schema = {
     "required": ["update_id"]
 }
 
-
-HODOR_QUOTES = ['Hodor!', 'Hodor.', 'Hodor! Hodor!', 'HOOODOORRR!!']
-VERSION = "0.0.4"
-
 def new_conn():
     conn = psycopg2.connect(
         database=url.path[1:],
@@ -52,7 +51,7 @@ def new_conn():
 
 
 def talk_with_user():
-    return "Hi, my version is " + VERSION
+    return texts.BASE_ANSWER
 
 
 def log_request(chat_id):
@@ -138,7 +137,7 @@ def anons_update():
         chat_id = chat_info["CHAT_ID"]
         res = {
             'chat_id': chat_id,
-            'text': "My new version is "+VERSION
+            'text': texts.UPDATE_ANONS
         }
         requests.post('https://api.telegram.org/bot{0}/SendMessage'.format(os.environ.get('TELEGRAM_TOKEN')), data=res)
         count += 1
