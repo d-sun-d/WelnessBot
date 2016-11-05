@@ -49,7 +49,7 @@ def log_request(chat_id):
     cur = conn.cursor()
     cur.execute(
         "INSERT INTO CHATS (CHAT_ID, LAST_TS) \
-         VALUES ('{1}', {2})".format(chat_id, int(time.time()))
+         VALUES ('{0}', {1})".format(chat_id, int(time.time()))
     );
     conn.commit()
 
