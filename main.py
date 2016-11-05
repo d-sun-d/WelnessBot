@@ -5,6 +5,8 @@ from jsonschema import validate, ValidationError
 import requests
 import logging
 from logging import StreamHandler
+import psycopg2
+import urlparse
 
 
 app = Flask(__name__)
@@ -37,7 +39,6 @@ update_schema = {
 
 HODOR_QUOTES = ['Hodor!', 'Hodor.', 'Hodor! Hodor!', 'HOOODOORRR!!']
 
-
 @app.route('/hodor/<token>', methods=['POST'])
 def hodor(token):
     if os.environ.get('TELEGRAM_TOKEN') is None:
@@ -56,6 +57,24 @@ def hodor(token):
     requests.post('https://api.telegram.org/bot{0}/SendMessage'.format(os.environ.get('TELEGRAM_TOKEN')), data=res)
     return jsonify(res), 200
 
+@app.route('/create_db')
+def create_db():
+    cur = conn.cursor()
+    cur.execute('''CREATE TABLE CHATS
+           (CHAT_ID        TEXT PRIMARY KEY     NOT NULL,
+            LAST_TS        INT     NOT NULL,);''')
+    return jsonify({"result":"Table created successfully"})
 
 if __name__ == '__main__':
+    urlparse.uses_netloc.append("postgres")
+    url = urlparse.urlparse(os.environ["DATABASE_URL"])
+
+    conn = psycopg2.connect(
+        database=url.path[1:],
+        user=url.username,
+        password=url.password,
+        host=url.hostname,
+        port=url.port
+    )
+
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT')))
