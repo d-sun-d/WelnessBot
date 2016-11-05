@@ -38,7 +38,7 @@ update_schema = {
 
 
 HODOR_QUOTES = ['Hodor!', 'Hodor.', 'Hodor! Hodor!', 'HOOODOORRR!!']
-VERSION = "0.0.2"
+VERSION = "0.0.3"
 
 def new_conn():
     conn = psycopg2.connect(
@@ -110,8 +110,7 @@ def create_db():
     conn.close()
     return jsonify({"result":"Table created successfully"})
 
-@app.route('/show_chats')
-def show_chats():
+def get_all_chats():
     conn = new_conn()
     cur = conn.cursor()
     cur.execute(
@@ -120,7 +119,23 @@ def show_chats():
     rows = cur.fetchall()
     cur.close()
     conn.close()
+    return rows
+
+@app.route('/show_chats')
+def show_chats():
+    rows = get_all_chats()
     return jsonify(rows)
+
+@app.route("/anons_update")
+def anons_update():
+    for chat_id in get_all_chats().keys():
+        res = {
+            'chat_id': chat_id,
+            'text': "My new version is "+VERSION
+        }
+        requests.post('https://api.telegram.org/bot{0}/SendMessage'.format(os.environ.get('TELEGRAM_TOKEN')), data=res)
+
+
 
 if __name__ == '__main__':
     urlparse.uses_netloc.append("postgres")
