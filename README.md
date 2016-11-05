@@ -71,5 +71,9 @@ Deploy
 
             https://api.telegram.org/bot<your telegram token here>/setWebhook?url=https://<your heroku app name>.herokuapp.com/hodor/<your telegram token here>
 
+    * to url
+
+           https://<your heroku app name>.herokuapp.com/create_db
+
 * start talking with your bot!
 
