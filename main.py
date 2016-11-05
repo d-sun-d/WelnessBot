@@ -64,10 +64,15 @@ def log_request(chat_id):
              VALUES ('{0}', {1})".format(chat_id, int(time.time()))
         )
         conn.commit()
-        cur.close()
-        conn.close()
     except:
-        pass
+        cur.execute(
+            "UPDATE CHATS set LAST_TS = {1} "
+            "where CHAT_ID='{0}'})".format(chat_id, int(time.time()))
+        )
+        conn.commit()
+    cur.close()
+    conn.close()
+
 
 @app.route('/hodor/<token>', methods=['POST'])
 def hodor(token):
