@@ -56,22 +56,26 @@ def talk_with_user():
 
 
 def log_request(chat_id):
-    conn = new_conn()
-    cur = conn.cursor()
     try:
+        conn = new_conn()
+        cur = conn.cursor()
         cur.execute(
             "INSERT INTO CHATS (CHAT_ID, LAST_TS) \
              VALUES ('{0}', {1})".format(chat_id, int(time.time()))
         )
         conn.commit()
+        cur.close()
+        conn.close()
     except:
+        conn = new_conn()
+        cur = conn.cursor()
         cur.execute(
             "UPDATE CHATS set LAST_TS = {1} \
              where CHAT_ID='{0}'".format(chat_id, int(time.time()))
         )
         conn.commit()
-    cur.close()
-    conn.close()
+        cur.close()
+        conn.close()
 
 
 @app.route('/hodor/<token>', methods=['POST'])
