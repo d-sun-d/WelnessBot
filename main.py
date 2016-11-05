@@ -66,8 +66,8 @@ def log_request(chat_id):
         conn.commit()
     except:
         cur.execute(
-            "UPDATE CHATS set LAST_TS = {1} "
-            "where CHAT_ID='{0}')".format(chat_id, int(time.time()))
+            "UPDATE CHATS set LAST_TS = {1} \
+             where CHAT_ID='{0}'".format(chat_id, int(time.time()))
         )
         conn.commit()
     cur.close()
