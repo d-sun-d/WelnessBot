@@ -40,12 +40,23 @@ update_schema = {
 HODOR_QUOTES = ['Hodor!', 'Hodor.', 'Hodor! Hodor!', 'HOOODOORRR!!']
 VERSION = "0.0.2"
 
+def new_conn():
+    conn = psycopg2.connect(
+        database=url.path[1:],
+        user=url.username,
+        password=url.password,
+        host=url.hostname,
+        port=url.port
+    )
+    return conn
+
 
 def talk_with_user():
     return "Hi, my version is " + VERSION
 
 
 def log_request(chat_id):
+    conn = new_conn()
     cur = conn.cursor()
     try:
         cur.execute(
@@ -54,6 +65,7 @@ def log_request(chat_id):
         )
         conn.commit()
         cur.close()
+        conn.close()
     except:
         pass
 
@@ -79,35 +91,30 @@ def hodor(token):
 
 @app.route('/create_db')
 def create_db():
+    conn = new_conn()
     cur = conn.cursor()
     cur.execute('''CREATE TABLE CHATS
            (CHAT_ID        TEXT PRIMARY KEY     NOT NULL,
             LAST_TS        INT     NOT NULL);''')
     conn.commit()
     cur.close()
+    conn.close()
     return jsonify({"result":"Table created successfully"})
 
 @app.route('/show_chats')
 def show_chats():
+    conn = new_conn()
     cur = conn.cursor()
     cur.execute(
         "SELECT CHAT_ID, LAST_TS  from CHATS"
     )
     rows = cur.fetchall()
     cur.close()
+    conn.close()
     return jsonify(rows)
 
 if __name__ == '__main__':
     urlparse.uses_netloc.append("postgres")
     url = urlparse.urlparse(os.environ["DATABASE_URL"])
-
-    conn = psycopg2.connect(
-        database=url.path[1:],
-        user=url.username,
-        password=url.password,
-        host=url.hostname,
-        port=url.port
-    )
-
 
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT')))
