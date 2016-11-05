@@ -47,11 +47,15 @@ def talk_with_user():
 
 def log_request(chat_id):
     cur = conn.cursor()
-    cur.execute(
-        "INSERT INTO CHATS (CHAT_ID, LAST_TS) \
-         VALUES ('{0}', {1})".format(chat_id, int(time.time()))
-    );
-    conn.commit()
+    try:
+        cur.execute(
+            "INSERT INTO CHATS (CHAT_ID, LAST_TS) \
+             VALUES ('{0}', {1})".format(chat_id, int(time.time()))
+        )
+        conn.commit()
+        cur.close()
+    except:
+        pass
 
 @app.route('/hodor/<token>', methods=['POST'])
 def hodor(token):
@@ -80,6 +84,7 @@ def create_db():
            (CHAT_ID        TEXT PRIMARY KEY     NOT NULL,
             LAST_TS        INT     NOT NULL);''')
     conn.commit()
+    cur.close()
     return jsonify({"result":"Table created successfully"})
 
 @app.route('/show_chats')
@@ -89,6 +94,7 @@ def show_chats():
         "SELECT CHAT_ID, LAST_TS  from CHATS"
     )
     rows = cur.fetchall()
+    cur.close()
     return jsonify(rows)
 
 if __name__ == '__main__':
