@@ -110,6 +110,7 @@ def create_db():
     conn.close()
     return jsonify({"result":"Table created successfully"})
 
+
 def get_all_chats():
     conn = new_conn()
     cur = conn.cursor()
