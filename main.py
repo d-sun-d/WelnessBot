@@ -1,6 +1,6 @@
 import os
 from random import randint
-from flask import Flask, abort, request, jsonify
+from flask import Flask, abort, request, jsonify, render_template
 from jsonschema import validate, ValidationError
 import requests
 import logging
@@ -142,6 +142,20 @@ def anons_update():
         requests.post('https://api.telegram.org/bot{0}/SendMessage'.format(os.environ.get('TELEGRAM_TOKEN')), data=res)
         count += 1
     return jsonify({"update_setn": count})
+
+
+def count_users():
+    return len(get_all_chats())
+
+
+@app.route("/")
+def main_page():
+    return render_template(
+        "homepage.html",
+        version=VERSION,
+        users_count=count_users(),
+        update_text=texts.UPDATE_ANONS
+    )
 
 if __name__ == '__main__':
     urlparse.uses_netloc.append("postgres")
