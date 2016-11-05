@@ -62,6 +62,10 @@ Deploy
 
             git push heroku master
 
+    * add postgresql to your app
+
+            heroku addons:create heroku-postgresql:hobby-dev
+
     * add a configuration variable to your app
 
             heroku config:set TELEGRAM_TOKEN=<your telegram token here>
